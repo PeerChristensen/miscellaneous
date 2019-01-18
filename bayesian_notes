@@ -1,0 +1,24 @@
+brms package tutorial
+
+sleepstudy data from lme4
+
+#lme4
+fit = lmer(Reaction ~ 1 + Days + (1 + Days|Subject),data = sleepstudy)
+
+
+#brms
+## performing surivival analysis using the "weibull" family
+fit1 <- brm(time | cens(censored) ~ age + sex + disease, 
+            data = kidney, family = weibull, inits = "0")
+            
+vignette(package = "brms")
+list methods: 
+methods(class = "brmsfit")
+
+brms log reg
+prior = ...
+family = bernoulli
+iter = 1000
+cores = e.g. 4
+chains = e.g. 4
+

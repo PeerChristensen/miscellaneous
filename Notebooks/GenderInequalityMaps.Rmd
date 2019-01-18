@@ -1,0 +1,95 @@
+---
+title: "Creating a world map with Gender Inequality index data (UN, 2015)"
+author: "Peer Christensen"
+date: "16/9/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include=FALSE} 
+knitr::opts_chunk$set(message = F) 
+knitr::opts_chunk$set(warning = F) 
+```
+
+This document provides simple examples of how you can plot data onto a world map. In this case we'll use the Gender Inequality Index (GII) from the UN (2015).
+
+Let's first load the packages that we'll be using. Make sure to install them first if needed.
+```{r}
+library(rworldmap)
+library(ggplot2)
+library(RColorBrewer)
+```
+
+### Loading the data
+```{r}
+ineq=read.csv2("genderInequalityIndex_2015.csv",header=T)
+ineq=ineq[,1:2] #taking only the first two columns
+ineq=na.omit(ineq) #removing NA values
+colnames(ineq)=c("country","gii") #changing the column names
+head(ineq)
+```
+
+### Loading a world map and merging our data
+```{r}
+worldMap <- map_data(map="world") #note that this is actually a data frame
+head(worldMap)
+giiDF=merge(x=worldMap,y=ineq,by.x="region",by.y="country")
+head(giiDF)
+```
+We have merged the two data frames where the "region" column in our worldMap data frame and "country" in ineq converge. Cases where the values in "region" and "country" are non-identical are left out of the merged data frame.
+
+### Plotting the data with ggplot()
+```{r}
+giiMap <- ggplot() + 
+  theme(legend.title = element_blank()) +
+  geom_map(data=giiDF, map=worldMap, aes(map_id=region,x=long, y=lat, fill=gii)) +
+  scale_fill_gradient(low = "green", high = "darkred") +
+  coord_equal() + 
+  xlim(-175, 175) 
+giiMap
+
+```
+
+### Adding more contrast with trans = "log10"
+```{r}
+giiMap <- ggplot() + 
+  theme(legend.title = element_blank()) +
+  geom_map(data=giiDF, map=worldMap, aes(map_id=region,x=long, y=lat, fill=gii)) +
+  scale_fill_gradient(low = "green", high = "darkred",trans = "log10") +
+  coord_equal() + 
+  xlim(-175, 175) 
+giiMap
+```
+
+### Using colour palettes from RColorBrewer
+```{r}
+cols2=brewer.pal(9,"RdYlGn")
+giiMap <- ggplot() + 
+  theme(legend.title = element_blank()) +
+  geom_map(data=giiDF, map=worldMap, aes(map_id=region,x=long, y=lat, fill=gii)) +
+  scale_fill_gradient(low = cols2[9], high = cols2[1]) +
+  coord_equal() + 
+  xlim(-175, 175) 
+giiMap
+```
+
+### Zooming in on the Nordic-Baltic region with a few additional changes
+```{r}
+cols2=brewer.pal(9,"RdYlGn")
+countries= aggregate(cbind(long,lat)~region,data=giiDF,FUN=median)
+giiMap <- ggplot() + 
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),panel.background = element_rect(fill = 'lightblue', colour = 'black')) +
+  geom_map(data=giiDF, map=worldMap, aes(map_id=region,x=long, y=lat, fill=gii),color="white",size=0.2) +
+  scale_fill_gradient(low = cols2[9], high = cols2[1],trans = "log10") +
+  geom_text(data=countries, aes(long,lat,label=region),size=3,color="gold1") +
+  coord_equal() + 
+  ylim(50,75) +
+  xlim(0,35)
+giiMap
+```
+
+
