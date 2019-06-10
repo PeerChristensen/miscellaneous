@@ -9,7 +9,7 @@ library(tmap)
 
 stroke <- gtrends(c("stroke"),
                   gprop = "web",
-                  #time  = "2004-01-01 2019-03-31",
+                  time  = "2004-01-01 2019-03-31",
                   geo   = c("MY"))
 
 stroke <- stroke$interest_by_region
@@ -17,6 +17,8 @@ stroke <- stroke$interest_by_region
 myMap <- getData("GADM",country="MYS",level=1)
 
 myMap@data$NAME_1 <- recode(myMap@data$NAME_1,"Trengganu"="Terengganu")
+
+stroke$location <- recode (stroke$location,"Malacca"="Melaka", "Penang" ="Pulau Pinang", "Labuan Federal Territory"="Labuan","Federal Territory of Kuala Lumpur" = "Kuala Lumpur")
 
 strokeMerged  <- sp::merge(myMap,stroke,by.x = "NAME_1",by.y= "location")
 
@@ -31,7 +33,6 @@ tm_shape(strokeMerged) +
   tm_view(set.zoom.limits = c(6,9)) +
   tm_basemap(NULL)
 
-malMap <- map("Malaysia", fill = TRUE, col = 1, plot = F );
 ##########
 
 dk <- getData("GADM",country="DK",level=1)
@@ -40,6 +41,9 @@ nm <- gtrends(c("mallorca"),
                   gprop = "web",
                   #time  = "all",
                   geo   = c("DK"))
+
+nm$interest_over_time$date=as.Date(nm$interest_over_time$date)
+nm$interest_over_time=nm$interest_over_time %>% filter(date > "2010-01-01")
 
 nmReg <- nm$interest_by_region
 
