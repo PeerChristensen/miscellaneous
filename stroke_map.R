@@ -14,7 +14,7 @@ stroke <- gtrends(c("stroke"),
 
 stroke <- stroke$interest_by_region
 
-myMap <- getData("GADM",country="MYS",level=1,mask=TRUE)
+myMap <- getData("GADM",country="MYS",level=1)
 
 myMap@data$NAME_1 <- recode(myMap@data$NAME_1,"Trengganu"="Terengganu")
 
@@ -28,8 +28,10 @@ tm_shape(strokeMerged) +
   tm_layout(title = "Heat Map of Search Queries in Each State of Malaysia",
             title.position = c("center","top")) +
   tm_text("NAME_1", auto.placement = TRUE,size = .7) +
-  tm_view(set.zoom.limits = c(5,9))
+  tm_view(set.zoom.limits = c(6,9)) +
+  tm_basemap(NULL)
 
+malMap <- map("Malaysia", fill = TRUE, col = 1, plot = F );
 ##########
 
 dk <- getData("GADM",country="DK",level=1)
