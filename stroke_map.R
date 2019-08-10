@@ -9,8 +9,8 @@ library(tmap)
 
 strokeData <- gtrends(c("stroke"),
                   gprop = "web",
-                  time  = "2004-01-01 2019-03-31",
-                  geo   = c("MY"))
+                  time  = "2004-01-01 2019-06-19",
+                  geo   = c("DK"))
 
 stroke <- strokeData$interest_by_region
 
@@ -37,19 +37,25 @@ tm_shape(strokeMerged) +
 # interest over time
 stroke <- strokeData$interest_over_time
 
+#1
 stroke %>% 
   ggplot(aes(x=as.Date(date),y=hits)) + 
   geom_line() + 
   scale_x_date(date_breaks = "2 years",date_labels = "%Y")
+#2
+stroke %>% 
+  ggplot(aes(x=date,y=hits)) + 
+  geom_line() + 
+  scale_x_datetime(date_breaks = "2 years",date_labels = "%Y")
 
 ##########
 
-dk <- getData("GADM",country="DK",level=1)
+dk <- getData("GADM",country="NO",level=1)
 
-nm <- gtrends(c("Rasmus Paludan"),
+nm <- gtrends(c("sommerferie"),
                   gprop = "web",
-                  #time  = "all",
-                  geo   = c("DK"))
+                  time  = "all",
+                  geo   = c("NO"))
 
 nm$interest_over_time$date=as.Date(nm$interest_over_time$date)
 nm$interest_over_time=nm$interest_over_time %>% filter(date > "2010-01-01")
