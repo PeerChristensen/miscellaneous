@@ -29,7 +29,7 @@ output_3 <- html %>%
 
 Link <- paste0("https://www.boliga.dk",output_3)
 
-df1 <- tibble(Adresse,Pris,Type,Link)
+df1 <- tibble(Adresse,Pris,Type)
 
 #### Solgte
 

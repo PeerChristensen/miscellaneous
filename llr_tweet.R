@@ -28,7 +28,7 @@ df <- read_csv("llr_replies.csv")
 d <- df %>%
   select(screen_name,text) %>%
   unnest_tokens(word,text) %>%
-  mutate(word = removeWords(word,c("larsloekke","lars","løkke","rasmussen","dit","så",tm::stopwords("da")))) %>%
+  mutate(word = removeWords(word,c("larsloekke","lars","løkke","rasmussen","dit","så","t.co",tm::stopwords("da")))) %>%
   filter(word !="") %>%
   count(word) %>%
   arrange(desc(n))
