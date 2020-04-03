@@ -13,10 +13,13 @@ query = glue::glue(base_url, query = "aperol",
 
 base_url <- "https://api.etilbudsavis.dk/v2/offers/search?query="
 
-search_item <- "vodka"
+search_item <- "kahlua"
 query = glue::glue("{base_url}{search_item}&r_lat=55.6656223&r_lng=12.6009489&r_radius=2000")
 
 data  =  jsonlite::fromJSON(query)
+
+if (length(data) > 0) {
+
 
 heading <- data$heading
 store <- data$branding$name
@@ -30,10 +33,8 @@ until_day <- lubridate::wday(as.Date(data$run_till),label=T,abbr=F)
 
 df <- tibble(heading,store,price,quantity_min,from_date,from_day,until_date,until_day)
 df
-
-d <- df %>% filter(price<119)
-
-if (nrow(d) > 0) {
-  print("Do something")
+} else {
+  print("No results")
 }
+
 
